@@ -384,7 +384,7 @@
   (compile-watcher (-> css-dirs
                        (watcher*)
                        (file-filter ignore-dotfiles)
-                       (file-filter (extensions :css)))))
+                       (file-filter (extensions :scss :css)))))
 
 (defn get-changed-css-files [{:keys [last-pass css-last-pass] :as state}]
   ;; this uses watchtower change detection

@@ -2,10 +2,10 @@
   (:require
    [cljs.repl]
    [cljs.util]
-   [cljs.analyzer :as ana]   
+   [cljs.analyzer :as ana]
    [cljs.env :as env]
    [clojure.stacktrace :as trace]
-   [clojure.pprint :as p]   
+   [clojure.pprint :as p]
    [clojure.java.io :as io]
    [clojure.string :as string]
    [clojure.core.async :refer [chan <!! <! put! alts!! timeout close! go go-loop]]
@@ -14,18 +14,18 @@
    [clojure.tools.nrepl.middleware.interruptible-eval :as nrepl-eval]
    [cider.nrepl :as cider]
    [cemerick.piggieback :as pback]
-   
+
    [figwheel-sidecar.core :as fig]
    [figwheel-sidecar.config :as config]
    [figwheel-sidecar.auto-builder :as autobuild]
-   [clojurescript-build.core :as cbuild]   
+   [clojurescript-build.core :as cbuild]
    [clojurescript-build.auto :as auto]))
 
 ;; chrome error
 ;;  at error_test2 (http://localhost:3449/js/out/figwheel/client.js?zx=c852wj4xz1qe:384:8)
 ;; node error
 ;;  at error_test2 (/Users/brucehauman/workspace/noderer/out/noderer/core.js:16:8)
-;; safari 
+;; safari
 ;;  error_test2@http://localhost:3449/js/out/figwheel/client.js:384:11
 ;; firefox is the same
 ;;  error_test2@http://localhost:3449/js/out/figwheel/client.js:384:1
@@ -257,7 +257,7 @@
         (mapv repl-println errors))
       (when-not (builder-running? state-atom)
         (build-once build-ids)
-        
+
         ;; kill some undeclared warnings, hopefully?
         (Thread/sleep 300)
         (when-let [abuild
@@ -335,7 +335,7 @@
     'fig-status      status
     'clean-builds    clean-builds})
 
-(def figwheel-special-fns 
+(def figwheel-special-fns
   (let [special-fns' (into {} (map (fn [[k v]] [k (make-special-fn v)]) repl-control-fns))]
     (merge cljs.repl/default-special-fns special-fns' {'add-dep add-dep
                                                        'doc doc-help})))
