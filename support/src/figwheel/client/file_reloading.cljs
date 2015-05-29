@@ -64,7 +64,7 @@
                      (aget (.. goog/dependencies_ -visited) (aget gntp name)))
                    (js-keys gntp))))))
   (set! goog/require
-        (fn [name reload]           
+        (fn [name reload]
           (when (or (not (contains? *loaded-libs* name)) reload)
             (set! *loaded-libs* (conj (or *loaded-libs* #{}) name))
             (reload-file* (resolve-ns name)))))
@@ -94,7 +94,7 @@
                   false)))))
 
 (defmethod reload-base :html [request-url callback]
-  (dev-assert (string? request-url) (not (nil? callback)))  
+  (dev-assert (string? request-url) (not (nil? callback)))
   (let [deferred (loader/load (add-cache-buster request-url)
                               #js { :cleanupWhenDone true })]
     (.addCallback deferred #(apply callback [true]))
@@ -195,7 +195,7 @@
       (when (not-empty eval-bodies)
         (doseq [eval-body-file eval-bodies]
           (eval-body eval-body-file))))
-    
+
     (let [all-files (filter #(and (:namespace %)
                                   (not (:eval-body %)))
                             files)
@@ -245,27 +245,24 @@
          (.getElementsByTagName js/document "link")))
 
 (defn truncate-url [url]
-  (-> (first (string/split url #"\?")) 
+  (-> (first (string/split url #"\?"))
       (string/replace-first (str (.-protocol js/location) "//") "")
       (string/replace-first ".*://" "")
-      (string/replace-first #"^//" "")         
+      (string/replace-first #"^//" "")
       (string/replace-first #"[^\/]*" "")))
 
 (defn matches-file?
-  [{:keys [file]} link]
-  (when-let [link-href (.-href link)]
-    (let [match (string/join "/"
-                         (take-while identity
-                                     (map #(if (= %1 %2) %1 false)
-                                          (reverse (string/split file "/"))
-                                          (reverse (string/split (truncate-url link-href) "/")))))
-          match-length (count match)
-          file-name-length (count (last (string/split file "/")))]
-      (when (>= match-length file-name-length) ;; has to match more than the file name length
-        {:link link
-         :link-href link-href
-         :match-length match-length
-         :current-url-length (count (truncate-url link-href))}))))
+  [{:keys [file]} link
+   ]
+  (let [   rv   {:link link
+         :link-href (.-href link)
+         :match-length (count (.-href link))
+         :current-url-length (count (.-href link))
+         }]
+   ;; unconditionally match
+   (print rv)
+   rv)
+)
 
 (defn get-correct-link [f-data]
   (when-let [res (first
@@ -299,7 +296,7 @@
        (if (= orig-link (.-lastChild parent))
          (.appendChild parent klone)
          (.insertBefore parent klone (.-nextSibling orig-link)))
-       (js/setTimeout #(.removeChild parent orig-link) 300))))
+       (js/setTimeout #(.removeChild parent orig-link) 3000))))
 
 (defn reload-css-file [{:keys [file request-url] :as f-data}]
   (if-let [link (get-correct-link f-data)]

@@ -67,7 +67,7 @@
 (defn message* [opts msg-name data]
   (merge data
          (add-build-id opts
-                       { :msg-name msg-name 
+                       { :msg-name msg-name
                          :project-id (:unique-id opts)})))
 
 (defn update-connection-count [connection-count build-id f]
@@ -92,7 +92,7 @@
                      (<!! (timeout compile-wait-time))
                      (when (open? wschannel)
                        (send! wschannel (prn-str msg)))))))
-    
+
     (on-close wschannel (fn [status]
                           (update-connection-count connection-count desired-build-id dec)
                           (remove-watch file-change-atom watch-key)
@@ -119,7 +119,7 @@
   (try
     (-> (routes
          (GET "/figwheel-ws/:desired-build-id" {params :params} (reload-handler server-state))
-         (GET "/figwheel-ws" {params :params} (reload-handler server-state))       
+         (GET "/figwheel-ws" {params :params} (reload-handler server-state))
          (route/resources "/" {:root http-server-root})
          (or ring-handler (fn [r] false))
          (GET "/" [] (resource-response "index.html" {:root http-server-root}))
@@ -193,7 +193,7 @@
                          (:cljc changed-source-file-paths)))))))
 
 (let [root (norm-path (.getCanonicalPath (io/file ".")))]
-  (defn remove-root-path 
+  (defn remove-root-path
     "relativize to the local root just in case we have an absolute path"
     [path]
     (string/replace-first (norm-path path) (str root "/") "")))
@@ -201,7 +201,7 @@
 
 (defn file-changed?
   "Standard md5 check to see if a file actually changed."
-  [{:keys [file-md5-atom]} filepath]  
+  [{:keys [file-md5-atom]} filepath]
   (let [file (as-file filepath)]
     (when (.exists file)
       (let [contents (slurp file)]
@@ -354,7 +354,7 @@
    (binding [*memo-get-deps* (memoize get-deps)]
      (let [change-source-file-paths (get-changed-source-file-paths old-mtimes new-mtimes)]
        (notify-cljs-ns-changes state
-                               (set (concat additional-ns 
+                               (set (concat additional-ns
                                             (keep get-ns-from-source-file-path
                                                   (concat
                                                    (:cljs change-source-file-paths)
@@ -369,7 +369,7 @@
   (compile-watcher (-> css-dirs
                        (watcher*)
                        (file-filter ignore-dotfiles)
-                       (file-filter (extensions :css)))))
+                       (file-filter (extensions :css :scss)))))
 
 (defn get-changed-css-files [{:keys [last-pass css-last-pass] :as state}]
   ;; this uses watchtower change detection
@@ -390,7 +390,7 @@
   (when (:css-dirs state)
     (let [changed-css-files (get-changed-css-files state)]
       (when (not-empty changed-css-files)
-        (send-css-files state (map (partial make-css-file state) 
+        (send-css-files state (map (partial make-css-file state)
                                    changed-css-files))))))
 
 ;; end css changes
@@ -425,8 +425,8 @@
                                     repl
                                     open-file-command] :as opts}]
   ;; I'm spelling this all out as a reference
-  { :unique-id (or unique-id (.getCanonicalPath (io/file "."))) 
-     
+  { :unique-id (or unique-id (.getCanonicalPath (io/file ".")))
+
     :resource-paths (or
                      (and resource-paths
                           (empty? resource-paths)
@@ -441,7 +441,7 @@
     :server-port (or server-port 3449)
     :server-logfile server-logfile
     :repl repl
-    :css-last-pass (atom (System/currentTimeMillis))   
+    :css-last-pass (atom (System/currentTimeMillis))
     :compile-wait-time 10
     :file-md5-atom (initial-check-sums {:output-to output-to
                                         :output-dir output-dir
